@@ -129,7 +129,7 @@ private:
 };
 
 const float defaultGain = 1.0f;
-const float defaultDelay = 0.5f;
+const float defaultDelay = 0.0f;
 
 //==============================================================================
 GyaresAudioProcessor::GyaresAudioProcessor()
@@ -262,32 +262,71 @@ void GyaresAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+    synth.setCurrentPlaybackSampleRate (sampleRate);
+    keyboardState.reset();
+    delayBuffer.clear();
 }
 
 void GyaresAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
+    delayBuffer.clear();
 }
 
 void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
-    // In case we have more outputs than inputs, this code clears any output
+    const int numSamples = buffer.getNumSamples();
+    int channel, dp = 0;
+
+    // Go through the incoming data, and apply our gain to it...
+    for (channel = 0; channel < getNumInputChannels(); ++channel)
+        buffer.applyGain (channel, 0, buffer.getNumSamples(), gain);
+
+    // Now pass any incoming midi messages to our keyboard state object, and let it
+    // add messages to the buffer if the user is clicking on the on-screen keys
+    keyboardState.processNextMidiBuffer (midiMessages, 0, numSamples, true);
+
+    // and now get the synth to process these midi events and generate its output.
+    synth.renderNextBlock (buffer, midiMessages, 0, numSamples);
+
+    // Apply our delay effect to the new output..
+    for (channel = 0; channel < getNumInputChannels(); ++channel)
+    {
+        float* channelData = buffer.getWritePointer (channel);
+        float* delayData = delayBuffer.getWritePointer (jmin (channel, delayBuffer.getNumChannels() - 1));
+        dp = delayPosition;
+
+        for (int i = 0; i < numSamples; ++i)
+        {
+            const float in = channelData[i];
+            channelData[i] += delayData[dp];
+            delayData[dp] = (delayData[dp] + in) * delay;
+            if (++dp >= delayBuffer.getNumSamples())
+                dp = 0;
+        }
+    }
+
+    delayPosition = dp;
+
+    // In case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
     // guaranteed to be empty - they may contain garbage).
-    // I've added this to avoid people getting screaming feedback
-    // when they first compile the plugin, but obviously you don't need to
-    // this code if your algorithm already fills all the output channels.
     for (int i = getNumInputChannels(); i < getNumOutputChannels(); ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    for (int channel = 0; channel < getNumInputChannels(); ++channel)
-    {
-        float* channelData = buffer.getWritePointer (channel);
+    // ask the host for the current time so we can display it...
+    AudioPlayHead::CurrentPositionInfo newTime;
 
-        // ..do something to the data...
+    if (getPlayHead() != nullptr && getPlayHead()->getCurrentPosition (newTime))
+    {
+        // Successfully got the current time from the host..
+        lastPosInfo = newTime;
+    }
+    else
+    {
+        // If the host fails to fill-in the current time, we'll just clear it to a default..
+        lastPosInfo.resetToDefault();
     }
 }
 
@@ -308,12 +347,39 @@ void GyaresAudioProcessor::getStateInformation (MemoryBlock& destData)
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    
+    // Create an outer XML element..
+    XmlElement xml ("MYPLUGINSETTINGS");
+
+    // add some attributes to it..
+    xml.setAttribute ("uiWidth", lastUIWidth);
+    xml.setAttribute ("uiHeight", lastUIHeight);
+    xml.setAttribute ("gain", gain);
+    xml.setAttribute ("delay", delay);
+
+    // then use this helper function to stuff it into the binary blob and return it..
+    copyXmlToBinary (xml, destData);
 }
 
 void GyaresAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+    ScopedPointer<XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+
+    if (xmlState != nullptr)
+    {
+        // make sure that it's actually our type of XML object..
+        if (xmlState->hasTagName ("MYPLUGINSETTINGS"))
+        {
+            // ok, now pull out our parameters..
+            lastUIWidth  = xmlState->getIntAttribute ("uiWidth", lastUIWidth);
+            lastUIHeight = xmlState->getIntAttribute ("uiHeight", lastUIHeight);
+
+            gain  = (float) xmlState->getDoubleAttribute ("gain", gain);
+            delay = (float) xmlState->getDoubleAttribute ("delay", delay);
+        }
+    }
 }
 
 //==============================================================================
