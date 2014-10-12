@@ -67,6 +67,8 @@ private:
     ScopedPointer<Slider> delaySlider;
     ScopedPointer<Label> gainLabel;
     ScopedPointer<Label> delayLabel;
+    ScopedPointer<Slider> widthSlider;
+    ScopedPointer<Label> widthLabel;
 
 
     //==============================================================================

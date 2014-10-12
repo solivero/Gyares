@@ -12,6 +12,7 @@
 #define PLUGINPROCESSOR_H_INCLUDED
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "StereoWidth.h"
 
 
 //==============================================================================
@@ -27,6 +28,7 @@ public:
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock);
     void releaseResources();
+    void reset();
 
     void processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages);
 
@@ -65,6 +67,9 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
+    
+    String FloatArrayToString(float* fData, int numFloat);
+    int StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat);
     //==============================================================================
     // These properties are public so that our editor component can access them
     // A bit of a hacky way to do it, but it's only a demo! Obviously in your own
@@ -88,11 +93,14 @@ public:
     {
         gainParam = 0,
         delayParam,
+        stereoWidth,
 
-        totalNumParams
+        totalNumParam
     };
 
-    float gain, delay;
+    bool NeedsUIUpdate(){return UIUpdateFlag;};
+    void RequestUIUpdate(){UIUpdateFlag=true;};
+    void ClearUIUpdateFlag(){UIUpdateFlag=false;};
 
 private:
     //==============================================================================
@@ -102,6 +110,9 @@ private:
     // the synth!
     Synthesiser synth;
 
+    float UserParams[totalNumParam];
+    StereoWidth widthControl;
+    bool UIUpdateFlag;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GyaresAudioProcessor)
 };
