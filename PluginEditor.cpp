@@ -30,6 +30,12 @@
 GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ownerFilter)
     : AudioProcessorEditor(ownerFilter)
 {
+    addAndMakeVisible (delayBox = new GroupComponent ("Delay",
+                                                      TRANS("Delay")));
+    delayBox->setTextLabelPosition (Justification::centredLeft);
+    delayBox->setColour (GroupComponent::outlineColourId, Colour (0x66ff0000));
+    delayBox->setColour (GroupComponent::textColourId, Colour (0xff761ca4));
+
     addAndMakeVisible (keyboard = new MidiKeyboardComponent (ownerFilter->keyboardState, MidiKeyboardComponent::horizontalKeyboard));
     keyboard->setName ("Midi Keyboard");
 
@@ -48,20 +54,20 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     gainSlider->setColour (Slider::textBoxOutlineColourId, Colour (0xb2ff0065));
     gainSlider->addListener (this);
 
-    addAndMakeVisible (delaySlider = new Slider ("Delay Knob"));
-    delaySlider->setRange (0, 100, 1);
-    delaySlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
-    delaySlider->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
-    delaySlider->setColour (Slider::backgroundColourId, Colour (0xff1e9029));
-    delaySlider->setColour (Slider::thumbColourId, Colour (0xff2020b2));
-    delaySlider->setColour (Slider::trackColourId, Colour (0xff191b9a));
-    delaySlider->setColour (Slider::rotarySliderFillColourId, Colours::aqua);
-    delaySlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0xffac17b7));
-    delaySlider->setColour (Slider::textBoxTextColourId, Colour (0xff030072));
-    delaySlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xffaeaeae));
-    delaySlider->setColour (Slider::textBoxHighlightColourId, Colour (0xff8000ff));
-    delaySlider->setColour (Slider::textBoxOutlineColourId, Colour (0xb2ff0065));
-    delaySlider->addListener (this);
+    addAndMakeVisible (delayFeedbackSlider = new Slider ("Delay Knob"));
+    delayFeedbackSlider->setRange (0, 100, 1);
+    delayFeedbackSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    delayFeedbackSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    delayFeedbackSlider->setColour (Slider::backgroundColourId, Colour (0xff1e9029));
+    delayFeedbackSlider->setColour (Slider::thumbColourId, Colour (0xff2020b2));
+    delayFeedbackSlider->setColour (Slider::trackColourId, Colour (0xff191b9a));
+    delayFeedbackSlider->setColour (Slider::rotarySliderFillColourId, Colours::aqua);
+    delayFeedbackSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0xffac17b7));
+    delayFeedbackSlider->setColour (Slider::textBoxTextColourId, Colour (0xff030072));
+    delayFeedbackSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xffaeaeae));
+    delayFeedbackSlider->setColour (Slider::textBoxHighlightColourId, Colour (0xff8000ff));
+    delayFeedbackSlider->setColour (Slider::textBoxOutlineColourId, Colour (0xb2ff0065));
+    delayFeedbackSlider->addListener (this);
 
     addAndMakeVisible (gainLabel = new Label ("Gain Label",
                                               TRANS("Gain")));
@@ -72,14 +78,14 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     gainLabel->setColour (TextEditor::textColourId, Colours::black);
     gainLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
-    addAndMakeVisible (delayLabel = new Label ("Delay Label",
-                                               TRANS("Delay")));
-    delayLabel->setFont (Font (20.00f, Font::plain));
-    delayLabel->setJustificationType (Justification::centredLeft);
-    delayLabel->setEditable (false, false, false);
-    delayLabel->setColour (Label::textColourId, Colour (0xff7c09b9));
-    delayLabel->setColour (TextEditor::textColourId, Colours::black);
-    delayLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+    addAndMakeVisible (delayFeedbackLabel = new Label ("Delay Feedback",
+                                                       TRANS("Feedback")));
+    delayFeedbackLabel->setFont (Font (20.00f, Font::plain));
+    delayFeedbackLabel->setJustificationType (Justification::centredLeft);
+    delayFeedbackLabel->setEditable (false, false, false);
+    delayFeedbackLabel->setColour (Label::textColourId, Colour (0xff7c09b9));
+    delayFeedbackLabel->setColour (TextEditor::textColourId, Colours::black);
+    delayFeedbackLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (widthSlider = new Slider ("Stereo Width Knob"));
     widthSlider->setRange (0, 5, 0.1);
@@ -105,6 +111,30 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     widthLabel->setColour (TextEditor::textColourId, Colours::black);
     widthLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
+    addAndMakeVisible (delayTimeSlider = new Slider ("Delay Time"));
+    delayTimeSlider->setRange (0, 20, 0.1);
+    delayTimeSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    delayTimeSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
+    delayTimeSlider->setColour (Slider::backgroundColourId, Colour (0xff1e9029));
+    delayTimeSlider->setColour (Slider::thumbColourId, Colour (0xff2020b2));
+    delayTimeSlider->setColour (Slider::trackColourId, Colour (0xff191b9a));
+    delayTimeSlider->setColour (Slider::rotarySliderFillColourId, Colours::aqua);
+    delayTimeSlider->setColour (Slider::rotarySliderOutlineColourId, Colour (0xffac17b7));
+    delayTimeSlider->setColour (Slider::textBoxTextColourId, Colour (0xff030072));
+    delayTimeSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xffaeaeae));
+    delayTimeSlider->setColour (Slider::textBoxHighlightColourId, Colour (0xff8000ff));
+    delayTimeSlider->setColour (Slider::textBoxOutlineColourId, Colour (0xb2ff0065));
+    delayTimeSlider->addListener (this);
+
+    addAndMakeVisible (Time = new Label ("Delay Time",
+                                         TRANS("Time")));
+    Time->setFont (Font (20.00f, Font::plain));
+    Time->setJustificationType (Justification::centredLeft);
+    Time->setEditable (false, false, false);
+    Time->setColour (Label::textColourId, Colour (0xff7c09b9));
+    Time->setColour (TextEditor::textColourId, Colours::black);
+    Time->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -123,13 +153,16 @@ GyaresAudioProcessorEditor::~GyaresAudioProcessorEditor()
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
+    delayBox = nullptr;
     keyboard = nullptr;
     gainSlider = nullptr;
-    delaySlider = nullptr;
+    delayFeedbackSlider = nullptr;
     gainLabel = nullptr;
-    delayLabel = nullptr;
+    delayFeedbackLabel = nullptr;
     widthSlider = nullptr;
     widthLabel = nullptr;
+    delayTimeSlider = nullptr;
+    Time = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -156,13 +189,16 @@ void GyaresAudioProcessorEditor::paint (Graphics& g)
 
 void GyaresAudioProcessorEditor::resized()
 {
+    delayBox->setBounds (88, 168, 296, 118);
     keyboard->setBounds ((getWidth() / 2) - (proportionOfWidth (0.7000f) / 2), getHeight() - 16 - 88, proportionOfWidth (0.7000f), 88);
-    gainSlider->setBounds (96, 248, 96, 40);
-    delaySlider->setBounds (96 + 96, 248 + 0, 96, 40);
-    gainLabel->setBounds (96 + 0, 248 + -24, roundFloatToInt (96 * 1.0000f), roundFloatToInt (40 * 0.5000f));
-    delayLabel->setBounds ((96 + 96) + 0, 248 + -24, roundFloatToInt (96 * 1.0000f), roundFloatToInt (40 * 0.5000f));
-    widthSlider->setBounds ((96 + 96) + 96, 248 + 0, 96, 40);
-    widthLabel->setBounds (((96 + 96) + 96) + 0, 248 + -24, roundFloatToInt (96 * 1.0000f), roundFloatToInt (40 * 0.5000f));
+    gainSlider->setBounds (400, 256, 96, 40);
+    delayFeedbackSlider->setBounds ((88 + 14) + 0, (168 + 48) + 24, 96, 40);
+    gainLabel->setBounds (400 + 0, 256 + -24, roundFloatToInt (96 * 1.0000f), roundFloatToInt (40 * 0.5000f));
+    delayFeedbackLabel->setBounds (88 + 14, 168 + 48, roundFloatToInt (96 * 1.0000f), roundFloatToInt (40 * 0.5000f));
+    widthSlider->setBounds (400, 184, 96, 40);
+    widthLabel->setBounds (400, 160, 96, 20);
+    delayTimeSlider->setBounds (((88 + 14) + 0) + 96, ((168 + 48) + 24) + 0, 96, 40);
+    Time->setBounds ((88 + 14) + 96, (168 + 48) + 0, 96, 20);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -179,17 +215,23 @@ void GyaresAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         ourProcessor->setParameter(GyaresAudioProcessor::gainParam, (float)gainSlider->getValue());
         //[/UserSliderCode_gainSlider]
     }
-    else if (sliderThatWasMoved == delaySlider)
+    else if (sliderThatWasMoved == delayFeedbackSlider)
     {
-        //[UserSliderCode_delaySlider] -- add your slider handling code here..
-        ourProcessor->setParameter(GyaresAudioProcessor::delayFeedback, (float)delaySlider->getValue());
-        //[/UserSliderCode_delaySlider]
+        //[UserSliderCode_delayFeedbackSlider] -- add your slider handling code here..
+        ourProcessor->setParameter(GyaresAudioProcessor::delayFeedback, (float)delayFeedbackSlider->getValue());
+        //[/UserSliderCode_delayFeedbackSlider]
     }
     else if (sliderThatWasMoved == widthSlider)
     {
         //[UserSliderCode_widthSlider] -- add your slider handling code here..
         ourProcessor->setParameter(GyaresAudioProcessor::stereoWidth, (float)widthSlider->getValue());
         //[/UserSliderCode_widthSlider]
+    }
+    else if (sliderThatWasMoved == delayTimeSlider)
+    {
+        //[UserSliderCode_delayTimeSlider] -- add your slider handling code here..
+        ourProcessor->setParameter(GyaresAudioProcessor::delayTime, (float)delayTimeSlider->getValue());
+        //[/UserSliderCode_delayTimeSlider]
     }
 
     //[UsersliderValueChanged_Post]
@@ -205,7 +247,8 @@ void GyaresAudioProcessorEditor::timerCallback()
     //exchange any data you want between UI elements and the Plugin "ourProcessor"
     if(ourProcessor->NeedsUIUpdate()) {
         gainSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::gainParam), dontSendNotification);
-        delaySlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayFeedback), dontSendNotification);
+        delayFeedbackSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayFeedback), dontSendNotification);
+        delayTimeSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayTime), dontSendNotification);
         widthSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::stereoWidth), dontSendNotification);
         ourProcessor->ClearUIUpdateFlag();
     }
@@ -231,20 +274,23 @@ BEGIN_JUCER_METADATA
     <TEXT pos="0 0 100% 36" fill="solid: ff821768" hasStroke="0" text="Gyares Muchnicer Synthesizer"
           fontname="Default font" fontsize="30" bold="0" italic="0" justification="36"/>
   </BACKGROUND>
+  <GROUPCOMPONENT name="Delay" id="af7d91e63e52af8a" memberName="delayBox" virtualName=""
+                  explicitFocusOrder="0" pos="88 168 296 118" outlinecol="66ff0000"
+                  textcol="ff761ca4" title="Delay" textpos="33"/>
   <GENERICCOMPONENT name="Midi Keyboard" id="f5075a7affac6f2c" memberName="keyboard"
                     virtualName="" explicitFocusOrder="0" pos="0Cc 16Rr 70% 88" class="MidiKeyboardComponent"
                     params="ownerFilter-&gt;keyboardState, MidiKeyboardComponent::horizontalKeyboard"/>
   <SLIDER name="Gain Knob" id="f8aa0ecfccaae384" memberName="gainSlider"
-          virtualName="" explicitFocusOrder="0" pos="96 248 96 40" posRelativeX="ee0bf05f7eaaf830"
+          virtualName="" explicitFocusOrder="0" pos="400 256 96 40" posRelativeX="ee0bf05f7eaaf830"
           posRelativeY="ee0bf05f7eaaf830" bkgcol="ff1e9029" thumbcol="ff2020b2"
           trackcol="ff191b9a" rotarysliderfill="ff00ffff" rotaryslideroutline="ffac17b7"
           textboxtext="ff030072" textboxbkgd="ffaeaeae" textboxhighlight="ff8000ff"
           textboxoutline="b2ff0065" min="0" max="10" int="0.10000000000000000555"
           style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxLeft"
           textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
-  <SLIDER name="Delay Knob" id="fb8f9070b59f739d" memberName="delaySlider"
-          virtualName="" explicitFocusOrder="0" pos="0R 0 96 40" posRelativeX="f8aa0ecfccaae384"
-          posRelativeY="f8aa0ecfccaae384" bkgcol="ff1e9029" thumbcol="ff2020b2"
+  <SLIDER name="Delay Knob" id="fb8f9070b59f739d" memberName="delayFeedbackSlider"
+          virtualName="" explicitFocusOrder="0" pos="0 24 96 40" posRelativeX="4dcb6fdb53d8ae77"
+          posRelativeY="4dcb6fdb53d8ae77" bkgcol="ff1e9029" thumbcol="ff2020b2"
           trackcol="ff191b9a" rotarysliderfill="ff00ffff" rotaryslideroutline="ffac17b7"
           textboxtext="ff030072" textboxbkgd="ffaeaeae" textboxhighlight="ff8000ff"
           textboxoutline="b2ff0065" min="0" max="100" int="1" style="RotaryHorizontalVerticalDrag"
@@ -257,26 +303,40 @@ BEGIN_JUCER_METADATA
          edBkgCol="0" labelText="Gain" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="20"
          bold="0" italic="0" justification="33"/>
-  <LABEL name="Delay Label" id="4dcb6fdb53d8ae77" memberName="delayLabel"
-         virtualName="" explicitFocusOrder="0" pos="0 -24 100% 50%" posRelativeX="fb8f9070b59f739d"
-         posRelativeY="f8aa0ecfccaae384" posRelativeW="f8aa0ecfccaae384"
+  <LABEL name="Delay Feedback" id="4dcb6fdb53d8ae77" memberName="delayFeedbackLabel"
+         virtualName="" explicitFocusOrder="0" pos="14 48 100% 50%" posRelativeX="af7d91e63e52af8a"
+         posRelativeY="af7d91e63e52af8a" posRelativeW="f8aa0ecfccaae384"
          posRelativeH="f8aa0ecfccaae384" textCol="ff7c09b9" edTextCol="ff000000"
-         edBkgCol="0" labelText="Delay" editableSingleClick="0" editableDoubleClick="0"
+         edBkgCol="0" labelText="Feedback" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="20"
          bold="0" italic="0" justification="33"/>
   <SLIDER name="Stereo Width Knob" id="508a79197f48cedb" memberName="widthSlider"
-          virtualName="" explicitFocusOrder="0" pos="0R 0 96 40" posRelativeX="fb8f9070b59f739d"
-          posRelativeY="f8aa0ecfccaae384" bkgcol="ff1e9029" thumbcol="ff2020b2"
-          trackcol="ff191b9a" rotarysliderfill="ff00ffff" rotaryslideroutline="ffac17b7"
-          textboxtext="ff030072" textboxbkgd="ffaeaeae" textboxhighlight="ff8000ff"
-          textboxoutline="b2ff0065" min="0" max="5" int="0.10000000000000000555"
-          style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxLeft"
-          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
+          virtualName="" explicitFocusOrder="0" pos="400 184 96 40" bkgcol="ff1e9029"
+          thumbcol="ff2020b2" trackcol="ff191b9a" rotarysliderfill="ff00ffff"
+          rotaryslideroutline="ffac17b7" textboxtext="ff030072" textboxbkgd="ffaeaeae"
+          textboxhighlight="ff8000ff" textboxoutline="b2ff0065" min="0"
+          max="5" int="0.10000000000000000555" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="40"
+          textBoxHeight="20" skewFactor="1"/>
   <LABEL name="Stereo Width" id="7ff928a589097772" memberName="widthLabel"
-         virtualName="" explicitFocusOrder="0" pos="0 -24 100% 50%" posRelativeX="508a79197f48cedb"
-         posRelativeY="f8aa0ecfccaae384" posRelativeW="f8aa0ecfccaae384"
+         virtualName="" explicitFocusOrder="0" pos="400 160 96 20" posRelativeW="f8aa0ecfccaae384"
          posRelativeH="f8aa0ecfccaae384" textCol="ff7c09b9" edTextCol="ff000000"
          edBkgCol="0" labelText="Width" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="20"
+         bold="0" italic="0" justification="33"/>
+  <SLIDER name="Delay Time" id="e917c0629ce1ab84" memberName="delayTimeSlider"
+          virtualName="" explicitFocusOrder="0" pos="0R 0 96 40" posRelativeX="fb8f9070b59f739d"
+          posRelativeY="fb8f9070b59f739d" bkgcol="ff1e9029" thumbcol="ff2020b2"
+          trackcol="ff191b9a" rotarysliderfill="ff00ffff" rotaryslideroutline="ffac17b7"
+          textboxtext="ff030072" textboxbkgd="ffaeaeae" textboxhighlight="ff8000ff"
+          textboxoutline="b2ff0065" min="0" max="20" int="0.10000000000000000555"
+          style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
+  <LABEL name="Delay Time" id="9f2658e4281ef29b" memberName="Time" virtualName=""
+         explicitFocusOrder="0" pos="96 0 96 20" posRelativeX="4dcb6fdb53d8ae77"
+         posRelativeY="4dcb6fdb53d8ae77" posRelativeW="f8aa0ecfccaae384"
+         posRelativeH="f8aa0ecfccaae384" textCol="ff7c09b9" edTextCol="ff000000"
+         edBkgCol="0" labelText="Time" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="20"
          bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>

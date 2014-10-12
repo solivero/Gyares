@@ -62,13 +62,16 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    ScopedPointer<GroupComponent> delayBox;
     ScopedPointer<MidiKeyboardComponent> keyboard;
     ScopedPointer<Slider> gainSlider;
-    ScopedPointer<Slider> delaySlider;
+    ScopedPointer<Slider> delayFeedbackSlider;
     ScopedPointer<Label> gainLabel;
-    ScopedPointer<Label> delayLabel;
+    ScopedPointer<Label> delayFeedbackLabel;
     ScopedPointer<Slider> widthSlider;
     ScopedPointer<Label> widthLabel;
+    ScopedPointer<Slider> delayTimeSlider;
+    ScopedPointer<Label> Time;
 
 
     //==============================================================================

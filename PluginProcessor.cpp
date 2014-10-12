@@ -23,9 +23,9 @@ GyaresAudioProcessor::GyaresAudioProcessor()
 {
     UserParams[stereoWidth]=1.0f;
     UserParams[gainParam] = 1.0f;
+    UserParams[delayTime] = 12.0f;
     UserParams[delayFeedback] = 0.0f;
-    UserParams[delayTime] = 12000;
-    delayBuffer = AudioSampleBuffer(2, UserParams[delayTime]);
+    delayBuffer = AudioSampleBuffer(2, (int) UserParams[delayTime]*1000);
     widthControl.setWidth(UserParams[stereoWidth]);
     UIUpdateFlag = true;
 
@@ -63,6 +63,7 @@ float GyaresAudioProcessor::getParameter (int index)
             UserParams[stereoWidth]=widthControl.getWidth();
             return UserParams[stereoWidth];
         case delayFeedback: return UserParams[delayFeedback];
+        case delayTime: return UserParams[delayTime];
         case gainParam: return UserParams[gainParam];
         default: return 0.0f;
     }
@@ -77,6 +78,10 @@ void GyaresAudioProcessor::setParameter (int index, float newValue)
             break;
         case delayFeedback:
             UserParams[delayFeedback] = newValue;
+            break;
+        case delayTime:
+            UserParams[delayTime] = newValue;
+            delayBuffer.setSize(2, (int) UserParams[delayTime]*1000, false, true, true);
             break;
         case gainParam:
             UserParams[gainParam] = newValue;
@@ -94,7 +99,9 @@ const String GyaresAudioProcessor::getParameterName (int index)
         case gainParam:
             return "Gain Factor";
         case delayFeedback:
-            return "Delay Factor";
+            return "Delay Feedback";
+        case delayTime:
+            return "Delay Time";
         default: return String::empty;
     }
 }
@@ -274,8 +281,10 @@ void GyaresAudioProcessor::getStateInformation (MemoryBlock& destData)
     el->addTextElement(String(UserParams[gainParam]));
     el = root.createNewChildElement("Width");
     el->addTextElement(String(UserParams[stereoWidth]));
-    el = root.createNewChildElement("Delay");
+    el = root.createNewChildElement("Delay Feedback");
     el->addTextElement(String(UserParams[delayFeedback]));
+    el = root.createNewChildElement("Delay Time");
+    el->addTextElement(String(UserParams[delayTime]));
     copyXmlToBinary(root,destData);
 }
 
@@ -294,9 +303,12 @@ void GyaresAudioProcessor::setStateInformation (const void* data, int sizeInByte
             } else if(pChild->hasTagName("Width")) {
                 String text = pChild->getAllSubText();
                 setParameter(stereoWidth,text.getFloatValue());
-            } else if(pChild->hasTagName("Delay")) {
+            } else if(pChild->hasTagName("Delay Feedback")) {
                 String text = pChild->getAllSubText();
                 setParameter(delayFeedback, text.getFloatValue());
+            }else if(pChild->hasTagName("Delay Time")) {
+                String text = pChild->getAllSubText();
+                setParameter(delayTime, text.getFloatValue());
             }
         }
         delete pRoot;
