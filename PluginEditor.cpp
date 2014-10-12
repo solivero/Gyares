@@ -34,7 +34,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     keyboard->setName ("Midi Keyboard");
 
     addAndMakeVisible (gainSlider = new Slider ("Gain Knob"));
-    gainSlider->setRange (0, 10, 1);
+    gainSlider->setRange (0, 10, 0.1);
     gainSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     gainSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
     gainSlider->setColour (Slider::backgroundColourId, Colour (0xff1e9029));
@@ -82,7 +82,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     delayLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (widthSlider = new Slider ("Stereo Width Knob"));
-    widthSlider->setRange (0, 5, 0);
+    widthSlider->setRange (0, 5, 0.1);
     widthSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     widthSlider->setTextBoxStyle (Slider::TextBoxLeft, false, 40, 20);
     widthSlider->setColour (Slider::backgroundColourId, Colour (0xff1e9029));
@@ -182,7 +182,7 @@ void GyaresAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == delaySlider)
     {
         //[UserSliderCode_delaySlider] -- add your slider handling code here..
-        ourProcessor->setParameter(GyaresAudioProcessor::delayParam, (float)delaySlider->getValue());
+        ourProcessor->setParameter(GyaresAudioProcessor::delayFeedback, (float)delaySlider->getValue());
         //[/UserSliderCode_delaySlider]
     }
     else if (sliderThatWasMoved == widthSlider)
@@ -205,7 +205,7 @@ void GyaresAudioProcessorEditor::timerCallback()
     //exchange any data you want between UI elements and the Plugin "ourProcessor"
     if(ourProcessor->NeedsUIUpdate()) {
         gainSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::gainParam), dontSendNotification);
-        delaySlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayParam), dontSendNotification);
+        delaySlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayFeedback), dontSendNotification);
         widthSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::stereoWidth), dontSendNotification);
         ourProcessor->ClearUIUpdateFlag();
     }
@@ -239,9 +239,9 @@ BEGIN_JUCER_METADATA
           posRelativeY="ee0bf05f7eaaf830" bkgcol="ff1e9029" thumbcol="ff2020b2"
           trackcol="ff191b9a" rotarysliderfill="ff00ffff" rotaryslideroutline="ffac17b7"
           textboxtext="ff030072" textboxbkgd="ffaeaeae" textboxhighlight="ff8000ff"
-          textboxoutline="b2ff0065" min="0" max="10" int="1" style="RotaryHorizontalVerticalDrag"
-          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="40"
-          textBoxHeight="20" skewFactor="1"/>
+          textboxoutline="b2ff0065" min="0" max="10" int="0.10000000000000000555"
+          style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="Delay Knob" id="fb8f9070b59f739d" memberName="delaySlider"
           virtualName="" explicitFocusOrder="0" pos="0R 0 96 40" posRelativeX="f8aa0ecfccaae384"
           posRelativeY="f8aa0ecfccaae384" bkgcol="ff1e9029" thumbcol="ff2020b2"
@@ -269,9 +269,9 @@ BEGIN_JUCER_METADATA
           posRelativeY="f8aa0ecfccaae384" bkgcol="ff1e9029" thumbcol="ff2020b2"
           trackcol="ff191b9a" rotarysliderfill="ff00ffff" rotaryslideroutline="ffac17b7"
           textboxtext="ff030072" textboxbkgd="ffaeaeae" textboxhighlight="ff8000ff"
-          textboxoutline="b2ff0065" min="0" max="5" int="0" style="RotaryHorizontalVerticalDrag"
-          textBoxPos="TextBoxLeft" textBoxEditable="1" textBoxWidth="40"
-          textBoxHeight="20" skewFactor="1"/>
+          textboxoutline="b2ff0065" min="0" max="5" int="0.10000000000000000555"
+          style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxLeft"
+          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
   <LABEL name="Stereo Width" id="7ff928a589097772" memberName="widthLabel"
          virtualName="" explicitFocusOrder="0" pos="0 -24 100% 50%" posRelativeX="508a79197f48cedb"
          posRelativeY="f8aa0ecfccaae384" posRelativeW="f8aa0ecfccaae384"

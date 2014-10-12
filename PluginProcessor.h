@@ -67,7 +67,7 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData);
     void setStateInformation (const void* data, int sizeInBytes);
-    
+
     String FloatArrayToString(float* fData, int numFloat);
     int StringToFloatArray(String sFloatCSV, float* fData, int maxNumFloat);
     //==============================================================================
@@ -92,7 +92,8 @@ public:
     enum Parameters
     {
         gainParam = 0,
-        delayParam,
+        delayFeedback,
+        delayTime,
         stereoWidth,
 
         totalNumParam
