@@ -94,6 +94,7 @@ public:
         gainParam = 0,
         delayFeedback,
         delayTime,
+        delayBypass,
         stereoWidth,
 
         totalNumParam

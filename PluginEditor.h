@@ -37,7 +37,8 @@
 */
 class GyaresAudioProcessorEditor  : public AudioProcessorEditor,
                                     public Timer,
-                                    public SliderListener
+                                    public SliderListener,
+                                    public ButtonListener
 {
 public:
     //==============================================================================
@@ -54,6 +55,7 @@ public:
     void paint (Graphics& g);
     void resized();
     void sliderValueChanged (Slider* sliderThatWasMoved);
+    void buttonClicked (Button* buttonThatWasClicked);
 
 
 
@@ -71,7 +73,8 @@ private:
     ScopedPointer<Slider> widthSlider;
     ScopedPointer<Label> widthLabel;
     ScopedPointer<Slider> delayTimeSlider;
-    ScopedPointer<Label> Time;
+    ScopedPointer<Label> delayTimeLabel;
+    ScopedPointer<TextButton> delayBypass;
 
 
     //==============================================================================

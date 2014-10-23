@@ -25,6 +25,7 @@ GyaresAudioProcessor::GyaresAudioProcessor()
     UserParams[gainParam] = 1.0f;
     UserParams[delayTime] = 12.0f;
     UserParams[delayFeedback] = 0.0f;
+    UserParams[delayBypass] = 0.0f;
     delayBuffer = AudioSampleBuffer(2, (int) UserParams[delayTime]*1000);
     widthControl.setWidth(UserParams[stereoWidth]);
     UIUpdateFlag = true;
@@ -64,6 +65,7 @@ float GyaresAudioProcessor::getParameter (int index)
             return UserParams[stereoWidth];
         case delayFeedback: return UserParams[delayFeedback];
         case delayTime: return UserParams[delayTime];
+        case delayBypass: return UserParams[delayBypass];
         case gainParam: return UserParams[gainParam];
         default: return 0.0f;
     }
@@ -82,6 +84,9 @@ void GyaresAudioProcessor::setParameter (int index, float newValue)
         case delayTime:
             UserParams[delayTime] = newValue;
             delayBuffer.setSize(2, (int) UserParams[delayTime]*1000, false, true, true);
+            break;
+        case delayBypass:
+            UserParams[delayBypass] = newValue;
             break;
         case gainParam:
             UserParams[gainParam] = newValue;
@@ -102,6 +107,8 @@ const String GyaresAudioProcessor::getParameterName (int index)
             return "Delay Feedback";
         case delayTime:
             return "Delay Time";
+        case delayBypass:
+            return "Delay Bypass";
         default: return String::empty;
     }
 }
@@ -231,19 +238,21 @@ void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
         widthControl.ClockProcess(&leftData[i], &rightData[i]);
     }
     // Apply our delay effect to the new output..
-    for (channel = 0; channel < getNumInputChannels(); ++channel)
-    {
-        float* channelData = buffer.getWritePointer (channel);
-        float* delayData = delayBuffer.getWritePointer (jmin (channel, delayBuffer.getNumChannels() - 1));
-        dp = delayPosition;
-
-        for (int i = 0; i < numSamples; ++i)
+    if (!UserParams[delayBypass]) {
+        for (channel = 0; channel < getNumInputChannels(); ++channel)
         {
-            const float in = channelData[i];
-            channelData[i] += delayData[dp];
-            delayData[dp] = (delayData[dp] + in) * (UserParams[delayFeedback]/100);
-            if (++dp >= delayBuffer.getNumSamples())
-            dp = 0;
+            float* channelData = buffer.getWritePointer (channel);
+            float* delayData = delayBuffer.getWritePointer (jmin (channel, delayBuffer.getNumChannels() - 1));
+            dp = delayPosition;
+
+            for (int i = 0; i < numSamples; ++i)
+            {
+                const float in = channelData[i];
+                channelData[i] += delayData[dp];
+                delayData[dp] = (delayData[dp] + in) * (UserParams[delayFeedback]/100);
+                if (++dp >= delayBuffer.getNumSamples())
+                dp = 0;
+            }
         }
     }
 
@@ -285,6 +294,8 @@ void GyaresAudioProcessor::getStateInformation (MemoryBlock& destData)
     el->addTextElement(String(UserParams[delayFeedback]));
     el = root.createNewChildElement("Delay Time");
     el->addTextElement(String(UserParams[delayTime]));
+    el = root.createNewChildElement("Delay Bypass");
+    el->addTextElement(String(UserParams[delayBypass]));
     copyXmlToBinary(root,destData);
 }
 
@@ -306,9 +317,12 @@ void GyaresAudioProcessor::setStateInformation (const void* data, int sizeInByte
             } else if(pChild->hasTagName("Delay Feedback")) {
                 String text = pChild->getAllSubText();
                 setParameter(delayFeedback, text.getFloatValue());
-            }else if(pChild->hasTagName("Delay Time")) {
+            } else if(pChild->hasTagName("Delay Time")) {
                 String text = pChild->getAllSubText();
                 setParameter(delayTime, text.getFloatValue());
+            } else if(pChild->hasTagName("Delay Bypass")) {
+                String text = pChild->getAllSubText();
+                setParameter(delayBypass, text.getFloatValue());
             }
         }
         delete pRoot;
