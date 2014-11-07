@@ -26,6 +26,7 @@ GyaresAudioProcessor::GyaresAudioProcessor()
     UserParams[delayTime] = 12.0f;
     UserParams[delayFeedback] = 0.0f;
     UserParams[delayBypass] = 0.0f;
+    UserParams[delayWidth] = 0.0f;
     delayBuffer = AudioSampleBuffer(2, (int) UserParams[delayTime]*1000);
     widthControl.setWidth(UserParams[stereoWidth]);
     UIUpdateFlag = true;
@@ -66,6 +67,7 @@ float GyaresAudioProcessor::getParameter (int index)
         case delayFeedback: return UserParams[delayFeedback];
         case delayTime: return UserParams[delayTime];
         case delayBypass: return UserParams[delayBypass];
+        case delayWidth: return UserParams[delayWidth];
         case gainParam: return UserParams[gainParam];
         default: return 0.0f;
     }
@@ -88,6 +90,9 @@ void GyaresAudioProcessor::setParameter (int index, float newValue)
         case delayBypass:
             UserParams[delayBypass] = newValue;
             break;
+        case delayWidth:
+            UserParams[delayWidth] = newValue;
+            break;
         case gainParam:
             UserParams[gainParam] = newValue;
             break;
@@ -109,6 +114,8 @@ const String GyaresAudioProcessor::getParameterName (int index)
             return "Delay Time";
         case delayBypass:
             return "Delay Bypass";
+        case delayWidth:
+            return "Stereo Delay";
         default: return String::empty;
     }
 }

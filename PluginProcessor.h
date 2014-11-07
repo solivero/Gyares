@@ -95,6 +95,7 @@ public:
         delayFeedback,
         delayTime,
         delayBypass,
+        delayWidth,
         stereoWidth,
 
         totalNumParam
