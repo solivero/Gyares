@@ -22,9 +22,9 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 GyaresAudioProcessor::GyaresAudioProcessor()
 {
     UserParams[stereoWidth]=1.0f;
-    UserParams[gainParam] = 1.0f;
+    UserParams[gainParam] = 0.5f;
     UserParams[delayTime] = 12.0f;
-    UserParams[delayFeedback] = 0.0f;
+    UserParams[delayFeedback] = 1.0f;
     UserParams[delayBypass] = 0.0f;
     UserParams[delayWidth] = 0.0f;
     delayBuffer = AudioSampleBuffer(2, (int) UserParams[delayTime]*1000);
@@ -236,7 +236,7 @@ void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
 
         // Go through the incoming data, and apply our gain to it...
     for (channel = 0; channel < getNumInputChannels(); ++channel)
-        buffer.applyGain (channel, 0, buffer.getNumSamples(), UserParams[gainParam]/2);
+        buffer.applyGain (channel, 0, buffer.getNumSamples(), UserParams[gainParam]);
 
     float* leftData = buffer.getWritePointer(0);
     float* rightData = buffer.getWritePointer(1);
@@ -245,9 +245,16 @@ void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
         widthControl.ClockProcess(&leftData[i], &rightData[i]);
     }
     // Apply our delay effect to the new output..
+    // Panning, inte bara volymskillnad. Panning reglerar delaypulsernas avtagande så att även en konstant feedback kan avta på ena kanalen med panning. Feedback pan!
+    // Skapar illusion av att ljudet förflyttar sig succesivt mot höger eller vänster. SÅ JÄVLA COOLT
     if (!UserParams[delayBypass]) {
         for (channel = 0; channel < getNumInputChannels(); ++channel)
         {
+            float pan = 1;
+            if (UserParams[delayWidth] < 0 && channel == 1)
+                pan = 1 - (-1) * UserParams[delayWidth];
+            else if (UserParams[delayWidth] > 0 && channel == 0)
+                pan = 1 - UserParams[delayWidth];
             float* channelData = buffer.getWritePointer (channel);
             float* delayData = delayBuffer.getWritePointer (jmin (channel, delayBuffer.getNumChannels() - 1));
             dp = delayPosition;
@@ -256,7 +263,7 @@ void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
             {
                 const float in = channelData[i];
                 channelData[i] += delayData[dp];
-                delayData[dp] = (delayData[dp] + in) * (UserParams[delayFeedback]/100);
+                delayData[dp] = (delayData[dp] + in) * (UserParams[delayFeedback]/100) * pan;
                 if (++dp >= delayBuffer.getNumSamples())
                 dp = 0;
             }
@@ -301,6 +308,8 @@ void GyaresAudioProcessor::getStateInformation (MemoryBlock& destData)
     el->addTextElement(String(UserParams[delayFeedback]));
     el = root.createNewChildElement("Delay Time");
     el->addTextElement(String(UserParams[delayTime]));
+    el = root.createNewChildElement("Delay Panning");
+    el->addTextElement(String(UserParams[delayWidth]));
     el = root.createNewChildElement("Delay Bypass");
     el->addTextElement(String(UserParams[delayBypass]));
     copyXmlToBinary(root,destData);

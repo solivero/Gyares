@@ -75,6 +75,8 @@ private:
     ScopedPointer<Slider> delayTimeSlider;
     ScopedPointer<Label> delayTimeLabel;
     ScopedPointer<TextButton> delayBypass;
+    ScopedPointer<Slider> delayPanSlider;
+    ScopedPointer<Label> delayPanLabel;
 
 
     //==============================================================================

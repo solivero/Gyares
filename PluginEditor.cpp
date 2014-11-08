@@ -38,7 +38,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     keyboard->setName ("Midi Keyboard");
 
     addAndMakeVisible (gainSlider = new Slider ("Gain Knob"));
-    gainSlider->setRange (0, 2, 0.1);
+    gainSlider->setRange (0, 1, 0);
     gainSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     gainSlider->setTextBoxStyle (Slider::NoTextBox, false, 40, 20);
     gainSlider->setColour (Slider::textBoxTextColourId, Colour (0xff030072));
@@ -89,7 +89,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     addAndMakeVisible (delayTimeLabel = new Label ("Delay Time",
                                                    TRANS("Time")));
     delayTimeLabel->setFont (Font (20.00f, Font::plain));
-    delayTimeLabel->setJustificationType (Justification::centredLeft);
+    delayTimeLabel->setJustificationType (Justification::centred);
     delayTimeLabel->setEditable (false, false, false);
     delayTimeLabel->setColour (TextEditor::textColourId, Colours::black);
     delayTimeLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
@@ -99,6 +99,20 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     delayBypass->addListener (this);
     delayBypass->setColour (TextButton::buttonColourId, Colours::white);
     delayBypass->setColour (TextButton::buttonOnColourId, Colour (0xffe1113a));
+
+    addAndMakeVisible (delayPanSlider = new Slider ("Delay Panning"));
+    delayPanSlider->setRange (-1, 1, 0.1);
+    delayPanSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
+    delayPanSlider->setTextBoxStyle (Slider::NoTextBox, true, 40, 20);
+    delayPanSlider->addListener (this);
+
+    addAndMakeVisible (delayPanLabel = new Label ("Delay Pan",
+                                                  TRANS("Pan")));
+    delayPanLabel->setFont (Font (20.00f, Font::plain));
+    delayPanLabel->setJustificationType (Justification::centred);
+    delayPanLabel->setEditable (false, false, false);
+    delayPanLabel->setColour (TextEditor::textColourId, Colours::black);
+    delayPanLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -130,6 +144,8 @@ GyaresAudioProcessorEditor::~GyaresAudioProcessorEditor()
     delayTimeSlider = nullptr;
     delayTimeLabel = nullptr;
     delayBypass = nullptr;
+    delayPanSlider = nullptr;
+    delayPanLabel = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -146,7 +162,7 @@ void GyaresAudioProcessorEditor::paint (Graphics& g)
 
     g.setColour (Colours::black);
     g.setFont (Font (30.00f, Font::plain));
-    g.drawText (TRANS("Gyares Muchnicer Synthesizer"),
+    g.drawText (TRANS("Petri Soundmaker"),
                 0, 0, proportionOfWidth (1.0000f), 36,
                 Justification::centred, true);
 
@@ -156,17 +172,19 @@ void GyaresAudioProcessorEditor::paint (Graphics& g)
 
 void GyaresAudioProcessorEditor::resized()
 {
-    delayBox->setBounds (88, 176, 288, 110);
+    delayBox->setBounds (32, 176, 344, 110);
     keyboard->setBounds ((getWidth() / 2) - (proportionOfWidth (0.9500f) / 2), getHeight() - 16 - 88, proportionOfWidth (0.9500f), 88);
     gainSlider->setBounds (408, 248, 64, 48);
-    delayFeedbackSlider->setBounds ((88 + 16) + 0, (176 + 24) + 20, 64, 48);
+    delayFeedbackSlider->setBounds ((32 + 16) + 0, (176 + 24) + 20, 64, 48);
     gainLabel->setBounds (408 + 0, 248 + -24, roundFloatToInt (64 * 1.0000f), roundFloatToInt (48 * 0.5000f));
-    delayFeedbackLabel->setBounds (88 + 16, 176 + 24, roundFloatToInt (64 * 1.0000f), 20);
+    delayFeedbackLabel->setBounds (32 + 16, 176 + 24, roundFloatToInt (64 * 1.0000f), 20);
     widthSlider->setBounds (408 + 0, 184, 64, 48);
     widthLabel->setBounds (408, 160, roundFloatToInt (64 * 1.0000f), 20);
-    delayTimeSlider->setBounds (((88 + 16) + 88) + 0, ((176 + 24) + 0) + 20, 64, 48);
-    delayTimeLabel->setBounds ((88 + 16) + 88, (176 + 24) + 0, roundFloatToInt (64 * 1.0000f), 20);
+    delayTimeSlider->setBounds (((32 + 16) + 88) + 0, ((176 + 24) + 0) + 20, 64, 48);
+    delayTimeLabel->setBounds ((32 + 16) + 88, (176 + 24) + 0, roundFloatToInt (64 * 1.0000f), 20);
     delayBypass->setBounds (296, 200, 64, 64);
+    delayPanSlider->setBounds (((32 + 16) + 88) + 86, ((176 + 24) + 0) + 20, 64, 48);
+    delayPanLabel->setBounds ((32 + 16) + 174, (176 + 24) + 0, roundFloatToInt (64 * 1.0000f), 20);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -200,6 +218,12 @@ void GyaresAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
         //[UserSliderCode_delayTimeSlider] -- add your slider handling code here..
         ourProcessor->setParameter(GyaresAudioProcessor::delayTime, (float)delayTimeSlider->getValue());
         //[/UserSliderCode_delayTimeSlider]
+    }
+    else if (sliderThatWasMoved == delayPanSlider)
+    {
+        //[UserSliderCode_delayPanSlider] -- add your slider handling code here..
+        ourProcessor->setParameter(GyaresAudioProcessor::delayWidth, (float)delayPanSlider->getValue());
+        //[/UserSliderCode_delayPanSlider]
     }
 
     //[UsersliderValueChanged_Post]
@@ -235,6 +259,7 @@ void GyaresAudioProcessorEditor::timerCallback()
         delayFeedbackSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayFeedback), dontSendNotification);
         delayTimeSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayTime), dontSendNotification);
         widthSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::stereoWidth), dontSendNotification);
+        delayPanSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayWidth), dontSendNotification);
         delayBypass->setToggleState(1.0f == ourProcessor->getParameter(GyaresAudioProcessor::delayBypass), dontSendNotification);
         ourProcessor->ClearUIUpdateFlag();
     }
@@ -255,13 +280,13 @@ BEGIN_JUCER_METADATA
                  componentName="" parentClasses="public AudioProcessorEditor, public Timer"
                  constructorParams="GyaresAudioProcessor* ownerFilter" variableInitialisers="AudioProcessorEditor(ownerFilter)"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="600" initialHeight="400">
+                 fixedSize="1" initialWidth="600" initialHeight="400">
   <BACKGROUND backgroundColour="ffababab">
     <TEXT pos="0 0 100% 36" fill="solid: ff000000" hasStroke="0" text="Gyares Muchnicer Synthesizer"
           fontname="Default font" fontsize="30" bold="0" italic="0" justification="36"/>
   </BACKGROUND>
   <GROUPCOMPONENT name="Delay" id="af7d91e63e52af8a" memberName="delayBox" virtualName=""
-                  explicitFocusOrder="0" pos="88 176 288 110" title="Delay" textpos="33"/>
+                  explicitFocusOrder="0" pos="32 176 344 110" title="Delay" textpos="33"/>
   <GENERICCOMPONENT name="Midi Keyboard" id="f5075a7affac6f2c" memberName="keyboard"
                     virtualName="" explicitFocusOrder="0" pos="0Cc 16Rr 95% 88" class="MidiKeyboardComponent"
                     params="ownerFilter-&gt;keyboardState, MidiKeyboardComponent::horizontalKeyboard"/>
@@ -312,11 +337,23 @@ BEGIN_JUCER_METADATA
          posRelativeH="f8aa0ecfccaae384" edTextCol="ff000000" edBkgCol="0"
          labelText="Time" editableSingleClick="0" editableDoubleClick="0"
          focusDiscardsChanges="0" fontname="Default font" fontsize="20"
-         bold="0" italic="0" justification="33"/>
+         bold="0" italic="0" justification="36"/>
   <TEXTBUTTON name="Bypass Delay" id="76c6b2fdf2fb64a6" memberName="delayBypass"
               virtualName="" explicitFocusOrder="0" pos="296 200 64 64" bgColOff="ffffffff"
               bgColOn="ffe1113a" buttonText="Bypass" connectedEdges="0" needsCallback="1"
               radioGroupId="0"/>
+  <SLIDER name="Delay Panning" id="8c0952746a572f56" memberName="delayPanSlider"
+          virtualName="" explicitFocusOrder="0" pos="86 0R 64 48" posRelativeX="9f2658e4281ef29b"
+          posRelativeY="9f2658e4281ef29b" min="-1" max="1" int="0" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="NoTextBox" textBoxEditable="0" textBoxWidth="40"
+          textBoxHeight="20" skewFactor="1"/>
+  <LABEL name="Delay Pan Label" id="de543589889a88e8" memberName="delayPanLabel"
+         virtualName="" explicitFocusOrder="0" pos="174 0 100% 20" posRelativeX="4dcb6fdb53d8ae77"
+         posRelativeY="4dcb6fdb53d8ae77" posRelativeW="f8aa0ecfccaae384"
+         posRelativeH="f8aa0ecfccaae384" edTextCol="ff000000" edBkgCol="0"
+         labelText="Pan" editableSingleClick="0" editableDoubleClick="0"
+         focusDiscardsChanges="0" fontname="Default font" fontsize="20"
+         bold="0" italic="0" justification="36"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA
