@@ -38,7 +38,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     keyboard->setName ("Midi Keyboard");
 
     addAndMakeVisible (gainSlider = new Slider ("Gain Knob"));
-    gainSlider->setRange (0, 1, 0);
+    gainSlider->setRange (0, 2, 0.1);
     gainSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     gainSlider->setTextBoxStyle (Slider::NoTextBox, false, 40, 20);
     gainSlider->setColour (Slider::textBoxTextColourId, Colour (0xff030072));
@@ -67,7 +67,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     delayFeedbackLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (widthSlider = new Slider ("Stereo Width Knob"));
-    widthSlider->setRange (0, 5, 0.1);
+    widthSlider->setRange (0, 1, 0.1);
     widthSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     widthSlider->setTextBoxStyle (Slider::NoTextBox, false, 40, 20);
     widthSlider->addListener (this);
@@ -101,12 +101,12 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     delayBypass->setColour (TextButton::buttonOnColourId, Colour (0xffe1113a));
 
     addAndMakeVisible (delayPanSlider = new Slider ("Delay Panning"));
-    delayPanSlider->setRange (-1, 1, 0.1);
+    delayPanSlider->setRange (-1, 1, 0);
     delayPanSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
     delayPanSlider->setTextBoxStyle (Slider::NoTextBox, true, 40, 20);
     delayPanSlider->addListener (this);
 
-    addAndMakeVisible (delayPanLabel = new Label ("Delay Pan",
+    addAndMakeVisible (delayPanLabel = new Label ("Delay Panning",
                                                   TRANS("Pan")));
     delayPanLabel->setFont (Font (20.00f, Font::plain));
     delayPanLabel->setJustificationType (Justification::centred);
@@ -222,7 +222,7 @@ void GyaresAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     else if (sliderThatWasMoved == delayPanSlider)
     {
         //[UserSliderCode_delayPanSlider] -- add your slider handling code here..
-        ourProcessor->setParameter(GyaresAudioProcessor::delayWidth, (float)delayPanSlider->getValue());
+        ourProcessor->setParameter(GyaresAudioProcessor::delayPan, (float)delayPanSlider->getValue());
         //[/UserSliderCode_delayPanSlider]
     }
 
@@ -259,7 +259,7 @@ void GyaresAudioProcessorEditor::timerCallback()
         delayFeedbackSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayFeedback), dontSendNotification);
         delayTimeSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayTime), dontSendNotification);
         widthSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::stereoWidth), dontSendNotification);
-        delayPanSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayWidth), dontSendNotification);
+        delayPanSlider->setValue(ourProcessor->getParameter(GyaresAudioProcessor::delayPan), dontSendNotification);
         delayBypass->setToggleState(1.0f == ourProcessor->getParameter(GyaresAudioProcessor::delayBypass), dontSendNotification);
         ourProcessor->ClearUIUpdateFlag();
     }

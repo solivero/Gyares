@@ -12,6 +12,7 @@
 #include "PluginEditor.h"
 #include "StereoWidth.h"
 #include "Sinewave.h"
+#include "Delay.h"
 
 AudioProcessor* JUCE_CALLTYPE createPluginFilter();
  //==============================================================================
@@ -24,17 +25,14 @@ GyaresAudioProcessor::GyaresAudioProcessor()
     UserParams[stereoWidth]=1.0f;
     UserParams[gainParam] = 0.5f;
     UserParams[delayTime] = 12.0f;
-    UserParams[delayFeedback] = 1.0f;
+    UserParams[delayFeedback] = 5.0f;
     UserParams[delayBypass] = 0.0f;
-    UserParams[delayWidth] = 0.0f;
-    delayBuffer = AudioSampleBuffer(2, (int) UserParams[delayTime]*1000);
+    UserParams[delayPan] = 0.0f;
+    delayControl.setTime(UserParams[delayTime]*1000);
+    delayControl.setFeedback(UserParams[delayFeedback]);
+    delayControl.setBypass(UserParams[delayBypass]);
     widthControl.setWidth(UserParams[stereoWidth]);
     UIUpdateFlag = true;
-
-    lastUIWidth = 400;
-    lastUIHeight = 200;
-
-    delayPosition = 0;
 
     // Initialise the synth...
     for (int i = 4; --i >= 0;)
@@ -62,13 +60,22 @@ float GyaresAudioProcessor::getParameter (int index)
 {
     switch(index) {
         case stereoWidth:
-            UserParams[stereoWidth]=widthControl.getWidth();
+            UserParams[stereoWidth] = widthControl.getWidth();
             return UserParams[stereoWidth];
-        case delayFeedback: return UserParams[delayFeedback];
-        case delayTime: return UserParams[delayTime];
-        case delayBypass: return UserParams[delayBypass];
-        case delayWidth: return UserParams[delayWidth];
-        case gainParam: return UserParams[gainParam];
+        case delayFeedback:
+            UserParams[delayFeedback] = delayControl.getFeedback();
+            return UserParams[delayFeedback];
+        case delayTime:
+            UserParams[delayTime] = delayControl.getTime();
+            return UserParams[delayTime];
+        case delayBypass:
+            UserParams[delayBypass] = delayControl.isBypassed();
+            return UserParams[delayBypass];
+        case delayPan:
+            UserParams[delayPan] = delayControl.getPan();
+            return UserParams[delayPan];
+        case gainParam:
+            return UserParams[gainParam];
         default: return 0.0f;
     }
 }
@@ -77,21 +84,24 @@ void GyaresAudioProcessor::setParameter (int index, float newValue)
 {
     switch(index) {
         case stereoWidth:
-            UserParams[stereoWidth]=newValue;
+            UserParams[stereoWidth] = newValue;
             widthControl.setWidth(UserParams[stereoWidth]);
             break;
         case delayFeedback:
             UserParams[delayFeedback] = newValue;
+            delayControl.setFeedback(UserParams[delayFeedback]);
             break;
         case delayTime:
             UserParams[delayTime] = newValue;
-            delayBuffer.setSize(2, (int) UserParams[delayTime]*1000, false, true, true);
+            delayControl.setTime(UserParams[delayTime]*1000);
             break;
         case delayBypass:
             UserParams[delayBypass] = newValue;
+            delayControl.setBypass(UserParams[delayBypass]);
             break;
-        case delayWidth:
-            UserParams[delayWidth] = newValue;
+        case delayPan:
+            UserParams[delayPan] = newValue;
+            delayControl.setPan(UserParams[delayPan]);
             break;
         case gainParam:
             UserParams[gainParam] = newValue;
@@ -114,8 +124,8 @@ const String GyaresAudioProcessor::getParameterName (int index)
             return "Delay Time";
         case delayBypass:
             return "Delay Bypass";
-        case delayWidth:
-            return "Stereo Delay";
+        case delayPan:
+            return "Delay Pan";
         default: return String::empty;
     }
 }
@@ -205,7 +215,7 @@ void GyaresAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock
     // initialisation that you need..
     synth.setCurrentPlaybackSampleRate (sampleRate);
     keyboardState.reset();
-    delayBuffer.clear();
+    delayControl.getBuffer().clear();
 }
 
 void GyaresAudioProcessor::releaseResources()
@@ -219,14 +229,14 @@ void GyaresAudioProcessor::reset()
 {
     // Use this method as the place to clear any delay lines, buffers, etc, as it
     // means there's been a break in the audio's continuity.
-    delayBuffer.clear();
+    delayControl.getBuffer().clear();
 }
 
 void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
     const int numSamples = buffer.getNumSamples();
-    int channel, dp = 0;
-
+    int channel = 0;
+    AudioSampleBuffer& delayBuffer = delayControl.getBuffer();
     // Now pass any incoming midi messages to our keyboard state object, and let it
     // add messages to the buffer if the user is clicking on the on-screen keys
     keyboardState.processNextMidiBuffer (midiMessages, 0, numSamples, true);
@@ -240,38 +250,15 @@ void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
 
     float* leftData = buffer.getWritePointer(0);
     float* rightData = buffer.getWritePointer(1);
+    float* leftDelay = delayBuffer.getWritePointer(0);
+    float* rightDelay = delayBuffer.getWritePointer(1);
+
+    delayControl.applyDelay(buffer);
 
     for (long i = 0; i < numSamples; i++) {
         widthControl.ClockProcess(&leftData[i], &rightData[i]);
+        widthControl.ClockProcess(&leftDelay[i], &rightDelay[i]);
     }
-    // Apply our delay effect to the new output..
-    // Panning, inte bara volymskillnad. Panning reglerar delaypulsernas avtagande så att även en konstant feedback kan avta på ena kanalen med panning. Feedback pan!
-    // Skapar illusion av att ljudet förflyttar sig succesivt mot höger eller vänster. SÅ JÄVLA COOLT
-    if (!UserParams[delayBypass]) {
-        for (channel = 0; channel < getNumInputChannels(); ++channel)
-        {
-            float pan = 1;
-            if (UserParams[delayWidth] < 0 && channel == 1)
-                pan = 1 - (-1) * UserParams[delayWidth];
-            else if (UserParams[delayWidth] > 0 && channel == 0)
-                pan = 1 - UserParams[delayWidth];
-            float* channelData = buffer.getWritePointer (channel);
-            float* delayData = delayBuffer.getWritePointer (jmin (channel, delayBuffer.getNumChannels() - 1));
-            dp = delayPosition;
-
-            for (int i = 0; i < numSamples; ++i)
-            {
-                const float in = channelData[i];
-                channelData[i] += delayData[dp];
-                delayData[dp] = (delayData[dp] + in) * (UserParams[delayFeedback]/100) * pan;
-                if (++dp >= delayBuffer.getNumSamples())
-                dp = 0;
-            }
-        }
-    }
-
-    delayPosition = dp;
-
 
     // In case we have more outputs than inputs, we'll clear any output
     // channels that didn't contain input data, (because these aren't
@@ -309,7 +296,7 @@ void GyaresAudioProcessor::getStateInformation (MemoryBlock& destData)
     el = root.createNewChildElement("Delay Time");
     el->addTextElement(String(UserParams[delayTime]));
     el = root.createNewChildElement("Delay Panning");
-    el->addTextElement(String(UserParams[delayWidth]));
+    el->addTextElement(String(UserParams[delayPan]));
     el = root.createNewChildElement("Delay Bypass");
     el->addTextElement(String(UserParams[delayBypass]));
     copyXmlToBinary(root,destData);

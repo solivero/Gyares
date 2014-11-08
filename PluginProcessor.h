@@ -13,6 +13,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "StereoWidth.h"
+#include "Delay.h"
 
 
 //==============================================================================
@@ -95,7 +96,7 @@ public:
         delayFeedback,
         delayTime,
         delayBypass,
-        delayWidth,
+        delayPan,
         stereoWidth,
 
         totalNumParam
@@ -107,14 +108,13 @@ public:
 
 private:
     //==============================================================================
-    AudioSampleBuffer delayBuffer;
-    int delayPosition;
 
     // the synth!
     Synthesiser synth;
 
     float UserParams[totalNumParam];
     StereoWidth widthControl;
+    Delay delayControl;
     bool UIUpdateFlag;
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (GyaresAudioProcessor)
