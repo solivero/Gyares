@@ -11,7 +11,7 @@
 #ifndef STEREOWIDTH_H_INCLUDED
 #define STEREOWIDTH_H_INCLUDED
 
-/*Volume-Normalized Stereo Width Control, contributed by Michael Gruhn to the 
+/*Volume-Normalized Stereo Width Control, contributed by Michael Gruhn to the
 MusicDSP Source Code Archive: http://musicdsp.org/showArchiveComment.php?ArchiveID=256
 'width' is the stretch factor of the stereo field:
 width < 1: decrease in stereo width
@@ -26,10 +26,10 @@ public:
 
     //Parameters
     void setWidth(float width);
-    float getWidth(void){return m_width;};
+    float getWidth(void){return m_width*100;};
 
     //Use
-    void ClockProcess(float* LeftSample, float* RightSample); 
+    void ClockProcess(float* LeftSample, float* RightSample);
 
 private:
     float m_width, sumGain, diffGain;

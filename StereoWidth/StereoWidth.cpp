@@ -10,12 +10,12 @@
 
 #include "StereoWidth.h"
 
-StereoWidth::StereoWidth(){setWidth(1.0f);}
+StereoWidth::StereoWidth(){setWidth(100.0f);}
 StereoWidth::~StereoWidth(){}
 
 void StereoWidth::setWidth(float width)
 {
-    m_width=width;
+    m_width=width/100;
     float tmp;
     if(1.0f+width>2.0f)
         tmp=1.0f/(1.0f+m_width);

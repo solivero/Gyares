@@ -64,6 +64,7 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    ScopedPointer<GroupComponent> generalBox;
     ScopedPointer<GroupComponent> delayBox;
     ScopedPointer<MidiKeyboardComponent> keyboard;
     ScopedPointer<Slider> gainSlider;

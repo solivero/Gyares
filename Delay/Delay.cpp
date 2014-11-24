@@ -27,7 +27,7 @@ void Delay::applyDelay(AudioSampleBuffer& buffer) {
             {
                 const float in = channelData[i];
                 channelData[i] += delayData[dp];
-                delayData[dp] = (delayData[dp] + in) * (m_feedback/100) * pan;
+                delayData[dp] = (delayData[dp] + in) * (m_feedback/100.0) * pan;
                 if (++dp >= delayBuffer.getNumSamples())
                 dp = 0;
             }
@@ -47,7 +47,7 @@ void Delay::setFeedback(float feedback) {
 
 void Delay::setTime(float time) {
     m_time = time;
-    delayBuffer.setSize(2, (int) time, false, true, true);
+    delayBuffer.setSize(2, (int) time*44100, false, true, true);
 }
 
 void Delay::setBypass(float bypass) {

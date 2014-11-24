@@ -24,11 +24,11 @@ GyaresAudioProcessor::GyaresAudioProcessor()
 {
     UserParams[stereoWidth]=1.0f;
     UserParams[gainParam] = 0.5f;
-    UserParams[delayTime] = 12.0f;
-    UserParams[delayFeedback] = 5.0f;
+    UserParams[delayTime] = 1.0f;
+    UserParams[delayFeedback] = 50.0f;
     UserParams[delayBypass] = 0.0f;
     UserParams[delayPan] = 0.0f;
-    delayControl.setTime(UserParams[delayTime]*1000);
+    delayControl.setTime(UserParams[delayTime]);
     delayControl.setFeedback(UserParams[delayFeedback]);
     delayControl.setBypass(UserParams[delayBypass]);
     widthControl.setWidth(UserParams[stereoWidth]);
@@ -93,7 +93,7 @@ void GyaresAudioProcessor::setParameter (int index, float newValue)
             break;
         case delayTime:
             UserParams[delayTime] = newValue;
-            delayControl.setTime(UserParams[delayTime]*1000);
+            delayControl.setTime(UserParams[delayTime]);
             break;
         case delayBypass:
             UserParams[delayBypass] = newValue;
