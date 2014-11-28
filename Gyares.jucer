@@ -88,8 +88,8 @@
         <MODULEPATH id="juce_tracktion_marketplace" path="../../../JUCE/modules"/>
       </MODULEPATHS>
     </CODEBLOCKS>
-    <VS2012 targetFolder="Builds/VisualStudio2012" vstFolder="c:\SDKs\vstsdk2.4"
-            vst3Folder="c:\SDKs\VST3 SDK">
+    <VS2012 targetFolder="Builds/VisualStudio2012" vstFolder="c:\SDKs\VST"
+            vst3Folder="c:\SDKs\VST">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
                        isDebug="1" optimisation="1" targetName="Gyares" headerPath="../../Source/StereoWidth&#10;../../Source/Waveform&#10;../../Source/Delay"/>
