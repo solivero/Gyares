@@ -340,9 +340,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\TeragonGuiComponents\Components\PluginParameters\include\tinythread\source\tinythread.cpp">
-      <Filter>Gyares</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Delay\Delay.cpp">
       <Filter>Gyares\Source\Delay</Filter>
     </ClCompile>

@@ -12,7 +12,6 @@
               companyName="Petri Music" companyWebsite="oliverpetri.finnsinte.com"
               companyEmail="oliver.ce.petri@gmail.com">
   <MAINGROUP id="JTvkRq" name="Gyares">
-    <FILE id="bJat5O" name="tinythread.cpp" compile="1" resource="0" file="TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.cpp"/>
     <GROUP id="{A5BDB337-E882-7CF2-AB7D-E641B2EDE9FE}" name="Source">
       <GROUP id="{394137C0-342B-E549-29F6-CBC9DC49D66F}" name="Delay">
         <FILE id="pSPUmb" name="Delay.cpp" compile="1" resource="0" file="Source/Delay/Delay.cpp"/>

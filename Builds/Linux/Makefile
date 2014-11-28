@@ -51,7 +51,6 @@ ifeq ($(CONFIG),Release)
 endif
 
 OBJECTS := \
-  $(OBJDIR)/tinythread_dfaa38b2.o \
   $(OBJDIR)/Delay_7230b0b8.o \
   $(OBJDIR)/Sinewave_9cb78f19.o \
   $(OBJDIR)/StereoWidth_bf08a8e.o \
@@ -92,11 +91,6 @@ clean:
 strip:
 	@echo Stripping Gyares
 	-@strip --strip-unneeded $(OUTDIR)/$(TARGET)
-
-$(OBJDIR)/tinythread_dfaa38b2.o: ../../TeragonGuiComponents/Components/PluginParameters/include/tinythread/source/tinythread.cpp
-	-@mkdir -p $(OBJDIR)
-	@echo "Compiling tinythread.cpp"
-	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/Delay_7230b0b8.o: ../../Source/Delay/Delay.cpp
 	-@mkdir -p $(OBJDIR)
