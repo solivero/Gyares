@@ -88,7 +88,7 @@
         <MODULEPATH id="juce_tracktion_marketplace" path="../../../JUCE/modules"/>
       </MODULEPATHS>
     </CODEBLOCKS>
-    <VS2012 targetFolder="Builds/VisualStudio2012" vstFolder="c:\SDKs\VST"
+    <VS2013 targetFolder="Builds/VisualStudio2013" vstFolder="c:\SDKs\VST"
             vst3Folder="c:\SDKs\VST">
       <CONFIGURATIONS>
         <CONFIGURATION name="Debug" winWarningLevel="4" generateManifest="1" winArchitecture="32-bit"
@@ -114,7 +114,7 @@
         <MODULEPATH id="juce_audio_devices" path="../../juce"/>
         <MODULEPATH id="juce_audio_basics" path="../../juce"/>
       </MODULEPATHS>
-    </VS2012>
+    </VS2013>
   </EXPORTFORMATS>
   <MODULES>
     <MODULES id="juce_audio_basics" showAllCode="1" useLocalCopy="1"/>
