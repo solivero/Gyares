@@ -99,6 +99,7 @@
       <Option compile="0"/>
       <Option link="0"/>
     </Unit>
+    <Unit filename="../../Source/Waveform/Sawtooth.cpp"/>
     <Unit filename="../../Source/Waveform/Sinewave.cpp"/>
     <Unit filename="../../Source/Waveform/Sinewave.h">
       <Option compile="0"/>

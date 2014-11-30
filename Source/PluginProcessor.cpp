@@ -22,8 +22,8 @@ AudioProcessor* JUCE_CALLTYPE createPluginFilter();
 //==============================================================================
 GyaresAudioProcessor::GyaresAudioProcessor()
 {
-    UserParams[stereoWidth]=1.0f;
-    UserParams[gainParam] = 0.5f;
+    UserParams[stereoWidth]=100.0f;
+    UserParams[gainParam] = 1.0f;
     UserParams[delayTime] = 1.0f;
     UserParams[delayFeedback] = 50.0f;
     UserParams[delayBypass] = 0.0f;
@@ -247,6 +247,7 @@ void GyaresAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& 
         // Go through the incoming data, and apply our gain to it...
     for (channel = 0; channel < getNumInputChannels(); ++channel)
         buffer.applyGain (channel, 0, buffer.getNumSamples(), UserParams[gainParam]);
+        delayBuffer.applyGain(channel, 0, delayBuffer.getNumSamples(), UserParams[gainParam]);
 
     float* leftData = buffer.getWritePointer(0);
     float* rightData = buffer.getWritePointer(1);
@@ -323,6 +324,9 @@ void GyaresAudioProcessor::setStateInformation (const void* data, int sizeInByte
             } else if(pChild->hasTagName("Delay Time")) {
                 String text = pChild->getAllSubText();
                 setParameter(delayTime, text.getFloatValue());
+            } else if(pChild->hasTagName("Delay Panning")) {
+                String text = pChild->getAllSubText();
+                setParameter(delayPan, text.getFloatValue());
             } else if(pChild->hasTagName("Delay Bypass")) {
                 String text = pChild->getAllSubText();
                 setParameter(delayBypass, text.getFloatValue());

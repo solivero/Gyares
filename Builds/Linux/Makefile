@@ -52,6 +52,7 @@ endif
 
 OBJECTS := \
   $(OBJDIR)/Delay_7230b0b8.o \
+  $(OBJDIR)/Sawtooth_de77e012.o \
   $(OBJDIR)/Sinewave_9cb78f19.o \
   $(OBJDIR)/StereoWidth_bf08a8e.o \
   $(OBJDIR)/PluginProcessor_a059e380.o \
@@ -95,6 +96,11 @@ strip:
 $(OBJDIR)/Delay_7230b0b8.o: ../../Source/Delay/Delay.cpp
 	-@mkdir -p $(OBJDIR)
 	@echo "Compiling Delay.cpp"
+	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+
+$(OBJDIR)/Sawtooth_de77e012.o: ../../Source/Waveform/Sawtooth.cpp
+	-@mkdir -p $(OBJDIR)
+	@echo "Compiling Sawtooth.cpp"
 	@$(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 
 $(OBJDIR)/Sinewave_9cb78f19.o: ../../Source/Waveform/Sinewave.cpp

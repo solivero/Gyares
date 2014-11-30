@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Delay\Delay.cpp"/>
+    <ClCompile Include="..\..\Source\Waveform\Sawtooth.cpp"/>
     <ClCompile Include="..\..\Source\Waveform\Sinewave.cpp"/>
     <ClCompile Include="..\..\Source\StereoWidth\StereoWidth.cpp"/>
     <ClCompile Include="..\..\Source\PluginProcessor.cpp"/>

@@ -17,6 +17,7 @@
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="include" />
 				</Compiler>
 				<MakeCommands>
 					<Build command="$make -f $makefile" />
@@ -36,6 +37,7 @@
 				<Option createStaticLib="1" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -54,8 +56,12 @@
 		<Unit filename="Source/PluginProcessor.h" />
 		<Unit filename="Source/StereoWidth/StereoWidth.cpp" />
 		<Unit filename="Source/StereoWidth/StereoWidth.h" />
+		<Unit filename="Source/Waveform/Sawtooth.cpp" />
+		<Unit filename="Source/Waveform/Sawtooth.h" />
 		<Unit filename="Source/Waveform/Sinewave.cpp" />
 		<Unit filename="Source/Waveform/Sinewave.h" />
+		<Unit filename="include/Sawtooth.h" />
+		<Unit filename="src/Sawtooth.cpp" />
 		<Extensions>
 			<code_completion />
 			<debugger />

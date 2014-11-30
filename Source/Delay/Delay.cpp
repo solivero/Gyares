@@ -47,7 +47,7 @@ void Delay::setFeedback(float feedback) {
 
 void Delay::setTime(float time) {
     m_time = time;
-    delayBuffer.setSize(2, (int) time*44100, false, true, true);
+    delayBuffer.setSize(2, (int) (time*44100), false, true, true);
 }
 
 void Delay::setBypass(float bypass) {

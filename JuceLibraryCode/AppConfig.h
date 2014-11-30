@@ -215,10 +215,10 @@
  #define JucePlugin_Build_AAX              0
 #endif
 #ifndef  JucePlugin_Name
- #define JucePlugin_Name                   "Gyares"
+ #define JucePlugin_Name                   "Yaled"
 #endif
 #ifndef  JucePlugin_Desc
- #define JucePlugin_Desc                   "Gyares"
+ #define JucePlugin_Desc                   "Synth with delay effects"
 #endif
 #ifndef  JucePlugin_Manufacturer
  #define JucePlugin_Manufacturer           "yourcompany"
@@ -233,7 +233,7 @@
  #define JucePlugin_ManufacturerCode       'Manu'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             'Plug'
+ #define JucePlugin_PluginCode             'Petr'
 #endif
 #ifndef  JucePlugin_MaxNumInputChannels
  #define JucePlugin_MaxNumInputChannels    2
@@ -251,13 +251,13 @@
  #define JucePlugin_WantsMidiInput         1
 #endif
 #ifndef  JucePlugin_ProducesMidiOutput
- #define JucePlugin_ProducesMidiOutput     1
+ #define JucePlugin_ProducesMidiOutput     0
 #endif
 #ifndef  JucePlugin_SilenceInProducesSilenceOut
  #define JucePlugin_SilenceInProducesSilenceOut  0
 #endif
 #ifndef  JucePlugin_EditorRequiresKeyboardFocus
- #define JucePlugin_EditorRequiresKeyboardFocus  1
+ #define JucePlugin_EditorRequiresKeyboardFocus  0
 #endif
 #ifndef  JucePlugin_Version
  #define JucePlugin_Version                1.0.0
@@ -290,7 +290,7 @@
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.yourcompany.Gyares
+ #define JucePlugin_CFBundleIdentifier     com.oliverpetri.Gyares
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_SWGenerators

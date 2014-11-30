@@ -52,6 +52,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     gainSlider->setColour (Slider::rotarySliderFillColourId, Colour (0x7f0092c9));
     gainSlider->setColour (Slider::textBoxTextColourId, Colour (0xffbfbfbf));
     gainSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xff626262));
+    gainSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x40626262));
     gainSlider->setColour (Slider::textBoxOutlineColourId, Colour (0x00808080));
     gainSlider->addListener (this);
 
@@ -62,12 +63,13 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     delayFeedbackSlider->setColour (Slider::rotarySliderFillColourId, Colour (0x7f0092c9));
     delayFeedbackSlider->setColour (Slider::textBoxTextColourId, Colour (0xffbfbfbf));
     delayFeedbackSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xff626262));
+    delayFeedbackSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x40626262));
     delayFeedbackSlider->setColour (Slider::textBoxOutlineColourId, Colour (0x00808080));
     delayFeedbackSlider->addListener (this);
 
     addAndMakeVisible (gainLabel = new Label ("Gain Label",
                                               TRANS("Gain")));
-    gainLabel->setFont (Font (20.00f, Font::plain));
+    gainLabel->setFont (Font ("Ubuntu", 20.00f, Font::plain));
     gainLabel->setJustificationType (Justification::centred);
     gainLabel->setEditable (false, false, false);
     gainLabel->setColour (Label::textColourId, Colour (0xffbfbfbf));
@@ -76,7 +78,7 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
 
     addAndMakeVisible (delayFeedbackLabel = new Label ("Delay Feedback",
                                                        TRANS("Feedback")));
-    delayFeedbackLabel->setFont (Font (20.00f, Font::plain));
+    delayFeedbackLabel->setFont (Font ("Ubuntu", 20.00f, Font::plain));
     delayFeedbackLabel->setJustificationType (Justification::centred);
     delayFeedbackLabel->setEditable (false, false, false);
     delayFeedbackLabel->setColour (Label::textColourId, Colour (0xffbfbfbf));
@@ -90,12 +92,13 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     widthSlider->setColour (Slider::rotarySliderFillColourId, Colour (0x7f0092c9));
     widthSlider->setColour (Slider::textBoxTextColourId, Colour (0xffbfbfbf));
     widthSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xff626262));
+    widthSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x40626262));
     widthSlider->setColour (Slider::textBoxOutlineColourId, Colour (0x00808080));
     widthSlider->addListener (this);
 
     addAndMakeVisible (widthLabel = new Label ("Stereo Width",
                                                TRANS("Width")));
-    widthLabel->setFont (Font (20.00f, Font::plain));
+    widthLabel->setFont (Font ("Ubuntu", 20.00f, Font::plain));
     widthLabel->setJustificationType (Justification::centred);
     widthLabel->setEditable (false, false, false);
     widthLabel->setColour (Label::textColourId, Colour (0xffbfbfbf));
@@ -103,18 +106,19 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     widthLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
     addAndMakeVisible (delayTimeSlider = new Slider ("Delay Time"));
-    delayTimeSlider->setRange (0, 3, 0);
+    delayTimeSlider->setRange (0, 3, 0.1);
     delayTimeSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
-    delayTimeSlider->setTextBoxStyle (Slider::TextBoxBelow, true, 40, 20);
-    delayTimeSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xff0092c9));
+    delayTimeSlider->setTextBoxStyle (Slider::TextBoxBelow, false, 40, 20);
+    delayTimeSlider->setColour (Slider::rotarySliderFillColourId, Colour (0x7f0092c9));
     delayTimeSlider->setColour (Slider::textBoxTextColourId, Colour (0xffbfbfbf));
     delayTimeSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xff626262));
+    delayTimeSlider->setColour (Slider::textBoxHighlightColourId, Colour (0x40626262));
     delayTimeSlider->setColour (Slider::textBoxOutlineColourId, Colour (0x00808080));
     delayTimeSlider->addListener (this);
 
     addAndMakeVisible (delayTimeLabel = new Label ("Delay Time",
                                                    TRANS("Time")));
-    delayTimeLabel->setFont (Font (20.00f, Font::plain));
+    delayTimeLabel->setFont (Font ("Ubuntu", 20.00f, Font::plain));
     delayTimeLabel->setJustificationType (Justification::centred);
     delayTimeLabel->setEditable (false, false, false);
     delayTimeLabel->setColour (Label::textColourId, Colour (0xffbfbfbf));
@@ -131,10 +135,10 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
     delayBypass->setColour (TextButton::textColourOffId, Colour (0xffbfbfbf));
 
     addAndMakeVisible (delayPanSlider = new Slider ("Delay Panning"));
-    delayPanSlider->setRange (-1, 1, 0);
+    delayPanSlider->setRange (-1, 1, 0.1);
     delayPanSlider->setSliderStyle (Slider::RotaryHorizontalVerticalDrag);
-    delayPanSlider->setTextBoxStyle (Slider::TextBoxBelow, true, 40, 20);
-    delayPanSlider->setColour (Slider::rotarySliderFillColourId, Colour (0xff0092c9));
+    delayPanSlider->setTextBoxStyle (Slider::TextBoxBelow, false, 40, 20);
+    delayPanSlider->setColour (Slider::rotarySliderFillColourId, Colour (0x7f0092c9));
     delayPanSlider->setColour (Slider::textBoxTextColourId, Colour (0xffbfbfbf));
     delayPanSlider->setColour (Slider::textBoxBackgroundColourId, Colour (0xff626262));
     delayPanSlider->setColour (Slider::textBoxOutlineColourId, Colour (0x00808080));
@@ -142,12 +146,57 @@ GyaresAudioProcessorEditor::GyaresAudioProcessorEditor (GyaresAudioProcessor* ow
 
     addAndMakeVisible (delayPanLabel = new Label ("Delay Pan Label",
                                                   TRANS("Pan")));
-    delayPanLabel->setFont (Font (20.00f, Font::plain));
+    delayPanLabel->setFont (Font ("Ubuntu", 20.00f, Font::plain));
     delayPanLabel->setJustificationType (Justification::centred);
     delayPanLabel->setEditable (false, false, false);
     delayPanLabel->setColour (Label::textColourId, Colour (0xffbfbfbf));
     delayPanLabel->setColour (TextEditor::textColourId, Colours::black);
     delayPanLabel->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (seconds = new Label ("Seconds",
+                                            TRANS("s")));
+    seconds->setFont (Font (15.00f, Font::plain));
+    seconds->setJustificationType (Justification::centredLeft);
+    seconds->setEditable (false, false, false);
+    seconds->setColour (Label::textColourId, Colour (0xffbfbfbf));
+    seconds->setColour (TextEditor::textColourId, Colours::black);
+    seconds->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (seconds2 = new Label ("Seconds",
+                                             TRANS("%")));
+    seconds2->setFont (Font (14.00f, Font::plain));
+    seconds2->setJustificationType (Justification::centredLeft);
+    seconds2->setEditable (false, false, false);
+    seconds2->setColour (Label::textColourId, Colour (0xffbfbfbf));
+    seconds2->setColour (TextEditor::textColourId, Colours::black);
+    seconds2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (right = new Label ("Right",
+                                          TRANS("R")));
+    right->setFont (Font (15.00f, Font::plain));
+    right->setJustificationType (Justification::centredLeft);
+    right->setEditable (false, false, false);
+    right->setColour (Label::textColourId, Colour (0xffbfbfbf));
+    right->setColour (TextEditor::textColourId, Colours::black);
+    right->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (right2 = new Label ("Right",
+                                           TRANS("L")));
+    right2->setFont (Font (15.00f, Font::plain));
+    right2->setJustificationType (Justification::centredLeft);
+    right2->setEditable (false, false, false);
+    right2->setColour (Label::textColourId, Colour (0xffbfbfbf));
+    right2->setColour (TextEditor::textColourId, Colours::black);
+    right2->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
+
+    addAndMakeVisible (seconds3 = new Label ("Seconds",
+                                             TRANS("%")));
+    seconds3->setFont (Font (14.00f, Font::plain));
+    seconds3->setJustificationType (Justification::centredLeft);
+    seconds3->setEditable (false, false, false);
+    seconds3->setColour (Label::textColourId, Colour (0xffbfbfbf));
+    seconds3->setColour (TextEditor::textColourId, Colours::black);
+    seconds3->setColour (TextEditor::backgroundColourId, Colour (0x00000000));
 
 
     //[UserPreSize]
@@ -182,6 +231,11 @@ GyaresAudioProcessorEditor::~GyaresAudioProcessorEditor()
     delayBypass = nullptr;
     delayPanSlider = nullptr;
     delayPanLabel = nullptr;
+    seconds = nullptr;
+    seconds2 = nullptr;
+    right = nullptr;
+    right2 = nullptr;
+    seconds3 = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
@@ -200,9 +254,9 @@ void GyaresAudioProcessorEditor::paint (Graphics& g)
     g.fillRect (0, 0, 600, 69);
 
     g.setColour (Colour (0xffbfbfbf));
-    g.setFont (Font ("Andale Mono", 30.00f, Font::plain));
-    g.drawText (TRANS("Petri Soundmaker"),
-                0, 17, proportionOfWidth (1.0000f), 36,
+    g.setFont (Font ("Andale Mono", 42.00f, Font::plain));
+    g.drawText (TRANS("Yaled"),
+                0, 1, proportionOfWidth (1.0000f), 63,
                 Justification::centred, true);
 
     g.setColour (Colour (0xff626262));
@@ -223,17 +277,22 @@ void GyaresAudioProcessorEditor::resized()
     generalBox->setBounds (392, 88, 192, 136);
     delayBox->setBounds (16, 88, 344, 136);
     keyboard->setBounds ((getWidth() / 2) - (proportionOfWidth (0.9500f) / 2), getHeight() - 16 - 88, proportionOfWidth (0.9500f), 88);
-    gainSlider->setBounds (496, 136, 64, 68);
+    gainSlider->setBounds (496, 131, 64, 68);
     delayFeedbackSlider->setBounds ((16 + 16) + 0, (88 + 24) + 20, 64, 68);
-    gainLabel->setBounds (496 + 0, (88 + 24) + 0, roundFloatToInt (64 * 1.0000f), 20);
+    gainLabel->setBounds (408 + 88, ((88 + 24) + 0) + 0, roundFloatToInt (64 * 1.0000f), 20);
     delayFeedbackLabel->setBounds (16 + 16, 88 + 24, roundFloatToInt (64 * 1.0000f), 20);
-    widthSlider->setBounds (408 + 0, 136, 64, 68);
+    widthSlider->setBounds (408 + 0, ((88 + 24) + 0) + 20, 64, 68);
     widthLabel->setBounds (408, (88 + 24) + 0, roundFloatToInt (64 * 1.0000f), 20);
     delayTimeSlider->setBounds (((16 + 16) + 88) + 0, ((88 + 24) + 0) + 20, 64, 68);
     delayTimeLabel->setBounds ((16 + 16) + 88, (88 + 24) + 0, roundFloatToInt (64 * 1.0000f), 20);
     delayBypass->setBounds (288, 128, 56, 56);
     delayPanSlider->setBounds (((16 + 16) + 88) + 86, ((88 + 24) + 0) + 20, 64, 68);
     delayPanLabel->setBounds ((16 + 16) + 174, (88 + 24) + 0, roundFloatToInt (64 * 1.0000f), 20);
+    seconds->setBounds (160, 178, 16, 24);
+    seconds2->setBounds (73, 178, 24, 24);
+    right->setBounds (255, 160, 16, 24);
+    right2->setBounds (207, 160, 16, 24);
+    seconds3->setBounds (450, 178, 22, 24);
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -247,7 +306,6 @@ void GyaresAudioProcessorEditor::sliderValueChanged (Slider* sliderThatWasMoved)
     if (sliderThatWasMoved == gainSlider)
     {
         //[UserSliderCode_gainSlider] -- add your slider handling code here..
-        ourProcessor->setParameter(GyaresAudioProcessor::gainParam, (float)gainSlider->getValue());
         //[/UserSliderCode_gainSlider]
     }
     else if (sliderThatWasMoved == delayFeedbackSlider)
@@ -332,8 +390,8 @@ BEGIN_JUCER_METADATA
                  fixedSize="1" initialWidth="600" initialHeight="350">
   <BACKGROUND backgroundColour="ff7a7a7a">
     <RECT pos="0 0 600 69" fill="solid: ff303030" hasStroke="0"/>
-    <TEXT pos="0 17 100% 36" fill="solid: ffbfbfbf" hasStroke="0" text="Petri Soundmaker"
-          fontname="Andale Mono" fontsize="30" bold="0" italic="0" justification="36"/>
+    <TEXT pos="0 1 100% 63" fill="solid: ffbfbfbf" hasStroke="0" text="Yaled"
+          fontname="Andale Mono" fontsize="42" bold="0" italic="0" justification="36"/>
     <ROUNDRECT pos="8 240 584 103" cornerSize="10" fill="solid: ff626262" hasStroke="0"/>
     <ROUNDRECT pos="384 89 208 142" cornerSize="10" fill="solid: ff626262" hasStroke="0"/>
     <ROUNDRECT pos="8 89 362 142" cornerSize="10" fill="solid: ff626262" hasStroke="0"/>
@@ -348,36 +406,38 @@ BEGIN_JUCER_METADATA
                     virtualName="" explicitFocusOrder="0" pos="0Cc 16Rr 95% 88" class="MidiKeyboardComponent"
                     params="ownerFilter-&gt;keyboardState, MidiKeyboardComponent::horizontalKeyboard"/>
   <SLIDER name="Gain Knob" id="f8aa0ecfccaae384" memberName="gainSlider"
-          virtualName="" explicitFocusOrder="0" pos="496 136 64 68" posRelativeX="ee0bf05f7eaaf830"
+          virtualName="" explicitFocusOrder="0" pos="496 131 64 68" posRelativeX="ee0bf05f7eaaf830"
           posRelativeY="ee0bf05f7eaaf830" rotarysliderfill="7f0092c9" textboxtext="ffbfbfbf"
-          textboxbkgd="ff626262" textboxoutline="808080" min="0" max="2"
-          int="0.10000000000000000555" style="RotaryHorizontalVerticalDrag"
+          textboxbkgd="ff626262" textboxhighlight="40626262" textboxoutline="808080"
+          min="0" max="2" int="0.10000000000000000555" style="RotaryHorizontalVerticalDrag"
           textBoxPos="TextBoxBelow" textBoxEditable="1" textBoxWidth="40"
           textBoxHeight="20" skewFactor="1"/>
   <SLIDER name="Delay Knob" id="fb8f9070b59f739d" memberName="delayFeedbackSlider"
           virtualName="" explicitFocusOrder="0" pos="0 0R 64 68" posRelativeX="4dcb6fdb53d8ae77"
           posRelativeY="4dcb6fdb53d8ae77" rotarysliderfill="7f0092c9" textboxtext="ffbfbfbf"
-          textboxbkgd="ff626262" textboxoutline="808080" min="0" max="100"
-          int="1" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxBelow"
-          textBoxEditable="1" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
+          textboxbkgd="ff626262" textboxhighlight="40626262" textboxoutline="808080"
+          min="0" max="100" int="1" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxBelow" textBoxEditable="1" textBoxWidth="40"
+          textBoxHeight="20" skewFactor="1"/>
   <LABEL name="Gain Label" id="c5ae65335904ba58" memberName="gainLabel"
-         virtualName="" explicitFocusOrder="0" pos="0 0 100% 20" posRelativeX="f8aa0ecfccaae384"
-         posRelativeY="4dcb6fdb53d8ae77" posRelativeW="f8aa0ecfccaae384"
+         virtualName="" explicitFocusOrder="0" pos="88 0 100% 20" posRelativeX="7ff928a589097772"
+         posRelativeY="7ff928a589097772" posRelativeW="f8aa0ecfccaae384"
          posRelativeH="f8aa0ecfccaae384" textCol="ffbfbfbf" edTextCol="ff000000"
          edBkgCol="0" labelText="Gain" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="20"
-         bold="0" italic="0" justification="36"/>
+         focusDiscardsChanges="0" fontname="Ubuntu" fontsize="20" bold="0"
+         italic="0" justification="36"/>
   <LABEL name="Delay Feedback" id="4dcb6fdb53d8ae77" memberName="delayFeedbackLabel"
          virtualName="" explicitFocusOrder="0" pos="16 24 100% 20" posRelativeX="af7d91e63e52af8a"
          posRelativeY="af7d91e63e52af8a" posRelativeW="f8aa0ecfccaae384"
          posRelativeH="f8aa0ecfccaae384" textCol="ffbfbfbf" edTextCol="ff000000"
          edBkgCol="0" labelText="Feedback" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="20"
-         bold="0" italic="0" justification="36"/>
+         focusDiscardsChanges="0" fontname="Ubuntu" fontsize="20" bold="0"
+         italic="0" justification="36"/>
   <SLIDER name="Stereo Width Knob" id="508a79197f48cedb" memberName="widthSlider"
-          virtualName="" explicitFocusOrder="0" pos="0 136 64 68" posRelativeX="7ff928a589097772"
-          rotarysliderfill="7f0092c9" textboxtext="ffbfbfbf" textboxbkgd="ff626262"
-          textboxoutline="808080" min="0" max="100" int="1" style="RotaryHorizontalVerticalDrag"
+          virtualName="" explicitFocusOrder="0" pos="0 0R 64 68" posRelativeX="7ff928a589097772"
+          posRelativeY="7ff928a589097772" rotarysliderfill="7f0092c9" textboxtext="ffbfbfbf"
+          textboxbkgd="ff626262" textboxhighlight="40626262" textboxoutline="808080"
+          min="0" max="100" int="1" style="RotaryHorizontalVerticalDrag"
           textBoxPos="TextBoxBelow" textBoxEditable="1" textBoxWidth="40"
           textBoxHeight="20" skewFactor="1"/>
   <LABEL name="Stereo Width" id="7ff928a589097772" memberName="widthLabel"
@@ -385,37 +445,64 @@ BEGIN_JUCER_METADATA
          posRelativeW="f8aa0ecfccaae384" posRelativeH="f8aa0ecfccaae384"
          textCol="ffbfbfbf" edTextCol="ff000000" edBkgCol="0" labelText="Width"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
-         fontname="Default font" fontsize="20" bold="0" italic="0" justification="36"/>
+         fontname="Ubuntu" fontsize="20" bold="0" italic="0" justification="36"/>
   <SLIDER name="Delay Time" id="e917c0629ce1ab84" memberName="delayTimeSlider"
           virtualName="" explicitFocusOrder="0" pos="0 0R 64 68" posRelativeX="9f2658e4281ef29b"
-          posRelativeY="9f2658e4281ef29b" rotarysliderfill="ff0092c9" textboxtext="ffbfbfbf"
-          textboxbkgd="ff626262" textboxoutline="808080" min="0" max="3"
-          int="0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxBelow"
-          textBoxEditable="0" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
+          posRelativeY="9f2658e4281ef29b" rotarysliderfill="7f0092c9" textboxtext="ffbfbfbf"
+          textboxbkgd="ff626262" textboxhighlight="40626262" textboxoutline="808080"
+          min="0" max="3" int="0.10000000000000000555" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxBelow" textBoxEditable="1" textBoxWidth="40"
+          textBoxHeight="20" skewFactor="1"/>
   <LABEL name="Delay Time" id="9f2658e4281ef29b" memberName="delayTimeLabel"
          virtualName="" explicitFocusOrder="0" pos="88 0 100% 20" posRelativeX="4dcb6fdb53d8ae77"
          posRelativeY="4dcb6fdb53d8ae77" posRelativeW="f8aa0ecfccaae384"
          posRelativeH="f8aa0ecfccaae384" textCol="ffbfbfbf" edTextCol="ff000000"
          edBkgCol="0" labelText="Time" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="20"
-         bold="0" italic="0" justification="36"/>
+         focusDiscardsChanges="0" fontname="Ubuntu" fontsize="20" bold="0"
+         italic="0" justification="36"/>
   <TEXTBUTTON name="Bypass Delay" id="76c6b2fdf2fb64a6" memberName="delayBypass"
               virtualName="" explicitFocusOrder="0" pos="288 128 56 56" bgColOff="ff282828"
               bgColOn="ffe1113a" textCol="ffbfbfbf" textColOn="ffbfbfbf" buttonText="Bypass"
               connectedEdges="15" needsCallback="1" radioGroupId="0"/>
   <SLIDER name="Delay Panning" id="8c0952746a572f56" memberName="delayPanSlider"
           virtualName="" explicitFocusOrder="0" pos="86 0R 64 68" posRelativeX="9f2658e4281ef29b"
-          posRelativeY="9f2658e4281ef29b" rotarysliderfill="ff0092c9" textboxtext="ffbfbfbf"
+          posRelativeY="9f2658e4281ef29b" rotarysliderfill="7f0092c9" textboxtext="ffbfbfbf"
           textboxbkgd="ff626262" textboxoutline="808080" min="-1" max="1"
-          int="0" style="RotaryHorizontalVerticalDrag" textBoxPos="TextBoxBelow"
-          textBoxEditable="0" textBoxWidth="40" textBoxHeight="20" skewFactor="1"/>
+          int="0.10000000000000000555" style="RotaryHorizontalVerticalDrag"
+          textBoxPos="TextBoxBelow" textBoxEditable="1" textBoxWidth="40"
+          textBoxHeight="20" skewFactor="1"/>
   <LABEL name="Delay Pan Label" id="de543589889a88e8" memberName="delayPanLabel"
          virtualName="" explicitFocusOrder="0" pos="174 0 100% 20" posRelativeX="4dcb6fdb53d8ae77"
          posRelativeY="4dcb6fdb53d8ae77" posRelativeW="f8aa0ecfccaae384"
          posRelativeH="f8aa0ecfccaae384" textCol="ffbfbfbf" edTextCol="ff000000"
          edBkgCol="0" labelText="Pan" editableSingleClick="0" editableDoubleClick="0"
-         focusDiscardsChanges="0" fontname="Default font" fontsize="20"
-         bold="0" italic="0" justification="36"/>
+         focusDiscardsChanges="0" fontname="Ubuntu" fontsize="20" bold="0"
+         italic="0" justification="36"/>
+  <LABEL name="Seconds" id="cadaa63c017de721" memberName="seconds" virtualName=""
+         explicitFocusOrder="0" pos="160 178 16 24" textCol="ffbfbfbf"
+         edTextCol="ff000000" edBkgCol="0" labelText="s" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" bold="0" italic="0" justification="33"/>
+  <LABEL name="Seconds" id="4afa4a68a9c40971" memberName="seconds2" virtualName=""
+         explicitFocusOrder="0" pos="73 178 24 24" textCol="ffbfbfbf"
+         edTextCol="ff000000" edBkgCol="0" labelText="%" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="14" bold="0" italic="0" justification="33"/>
+  <LABEL name="Right" id="59a50b0b22c69b36" memberName="right" virtualName=""
+         explicitFocusOrder="0" pos="255 160 16 24" textCol="ffbfbfbf"
+         edTextCol="ff000000" edBkgCol="0" labelText="R" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" bold="0" italic="0" justification="33"/>
+  <LABEL name="Right" id="655ed03820f4dbb7" memberName="right2" virtualName=""
+         explicitFocusOrder="0" pos="207 160 16 24" textCol="ffbfbfbf"
+         edTextCol="ff000000" edBkgCol="0" labelText="L" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="15" bold="0" italic="0" justification="33"/>
+  <LABEL name="Seconds" id="6c737c281b28b2b0" memberName="seconds3" virtualName=""
+         explicitFocusOrder="0" pos="450 178 22 24" textCol="ffbfbfbf"
+         edTextCol="ff000000" edBkgCol="0" labelText="%" editableSingleClick="0"
+         editableDoubleClick="0" focusDiscardsChanges="0" fontname="Default font"
+         fontsize="14" bold="0" italic="0" justification="33"/>
 </JUCER_COMPONENT>
 
 END_JUCER_METADATA

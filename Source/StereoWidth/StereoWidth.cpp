@@ -15,7 +15,8 @@ StereoWidth::~StereoWidth(){}
 
 void StereoWidth::setWidth(float width)
 {
-    m_width=width/100;
+    width=width/100;
+    m_width=width;
     float tmp;
     if(1.0f+width>2.0f)
         tmp=1.0f/(1.0f+m_width);
