@@ -343,9 +343,6 @@
     <ClCompile Include="..\..\Source\Delay\Delay.cpp">
       <Filter>Gyares\Source\Delay</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\Source\Waveform\Sawtooth.cpp">
-      <Filter>Gyares\Source\Waveform</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\Source\Waveform\Sinewave.cpp">
       <Filter>Gyares\Source\Waveform</Filter>
     </ClCompile>
